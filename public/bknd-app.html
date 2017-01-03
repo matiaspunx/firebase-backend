@@ -1,0 +1,84 @@
+<link rel="import" href="bknd-elements/bknd-elements.html">
+<link rel="import" href="bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+<link rel="import" href="bower_components/polymerfire/polymerfire.html">
+<dom-module id="bknd-app">
+  <template>
+    <style include="bknd-app-shared-styles"></style>
+    <firebase-auth
+    id="auth"
+    app-name="bknd-roca"
+    provider="google"
+    signed-in="{{signedIn}}"
+    user="{{user}}">
+    </firebase-auth>
+
+    <firebase-document
+    id="document"
+    app-name="bknd-roca"
+    path="[[editableSucursalId]]"
+    data="{{editableSucursal}}">
+    </firebase-document>
+
+    <firebase-query
+      id="query"
+      app-name="bknd-roca"
+      path="/sucursales"
+      data="{{sucursales}}">
+    </firebase-query>
+    <app-indexeddb-mirror
+      session="[[user.uid]]"
+      key="sucursales"
+      data="{{sucursales}}"
+      persisted-data="{{persistedSucursales}}">
+    </app-indexeddb-mirror>
+
+    <bknd-toolbar user="{{user}}" signed-in="[[signedIn]]"
+    on-sign-out="signOut"></bknd-toolbar>
+
+    <bknd-login on-sign-in="signIn"
+    signed-in="[[signedIn]]"
+    disabled="[[!online]]"></bknd-login>
+
+    <div class="sucursales">
+        <template is="dom-repeat" items="[[persistedSucursales]]" as="sucursal">
+          <bknd-sucursal
+          id$="[[sucursal.$key]]"
+          title="[[sucursal.title]]"
+          body="[[sucursal.body]]"
+          on-tap="edit">
+        </bknd-sucursal>
+      </template>
+    </div>
+
+    <paper-fab
+    icon="add"
+    on-tap="create"
+    disabled="[[!online]]"
+    aria-label="Agregar sucursal">
+    </paper-fab>
+
+    <bknd-editor
+    id="editor"
+    sucursal="{{editableSucursal}}"
+    on-close="commitChange">
+    </bknd-editor>
+  </template>
+  <script>
+    Polymer({
+      is: 'bknd-app',
+      behaviors: [Polymer.BkndAppBehavior],
+      signIn: function() {
+        this.$.auth.signInWithPopup();
+      },
+      get sucursalPath() {
+        return '/sucursales/';
+      },
+      toEditableId: function(sucursalId) {
+        return this.sucursalPath + '/' + sucursalId;
+      },
+      get isEditable() {
+      return this.online;
+    }
+    });
+  </script>
+</dom-module>
