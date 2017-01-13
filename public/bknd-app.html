@@ -1,5 +1,6 @@
 <link rel="import" href="bknd-elements/bknd-elements.html">
 <link rel="import" href="bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+<link rel="import" href="bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="bower_components/polymerfire/polymerfire.html">
 <dom-module id="bknd-app">
   <template>
@@ -45,6 +46,7 @@
           id$="[[sucursal.$key]]"
           title="[[sucursal.title]]"
           body="[[sucursal.body]]"
+          file-name="[[sucursal.fileName]]"
           on-tap="edit">
         </bknd-sucursal>
       </template>
@@ -71,14 +73,14 @@
         this.$.auth.signInWithPopup();
       },
       get sucursalPath() {
-        return '/sucursales/';
+        return '/sucursales';
       },
       toEditableId: function(sucursalId) {
         return this.sucursalPath + '/' + sucursalId;
       },
       get isEditable() {
-      return this.online;
-    }
+        return this.online;
+      }
     });
   </script>
 </dom-module>

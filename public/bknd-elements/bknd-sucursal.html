@@ -11,7 +11,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/paper-styles/typography.html">
 <link rel="import" href="../bower_components/iron-input/iron-input.html">
 <link rel="import" href="../bower_components/iron-autogrow-textarea/iron-autogrow-textarea.html">
-
 <dom-module id="bknd-sucursal">
   <template>
     <style>
@@ -27,21 +26,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         --iron-autogrow-textarea: {
           margin: 0;
-          padding: 0;
-          font-family: 'Roboto Slab', Times New Roman, serif;
+          padding: 10px;
+          font-family: 'Roboto', 'Noto', sans-serif;
           white-space: pre-wrap;
+          min-height: 50px
         }
       }
 
       iron-autogrow-textarea {
         display: block;
         box-sizing: border-box;
+        border: 1px solid #737373;
+        background-color: #eee;
+        font-size: 1.15em;
         width: 100%;
-        border: 0;
+        min-height: 50px
         margin: 1em 0 0;
-        padding: 0;
-        font-size: 0.9em;
-        font-family: 'Roboto Slab', Times New Roman, serif;
       }
 
       .hidden {
@@ -60,7 +60,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       p {
         margin: 0;
-        font-family: 'Roboto Slab', Times New Roman, serif;
+        font-family: 'Roboto', 'Noto', sans-serif;
         font-size: 0.9em;
         white-space: pre-wrap;
       }
@@ -87,7 +87,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         width: 100%;
         margin: 0;
         outline: none;
-        border: none;
+        border: 1px solid #737373;
         background: #eee;
         white-space: pre-wrap;
         font-family: 'Roboto', 'Noto', sans-serif;
@@ -96,62 +96,66 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         color: #212121;
         padding: 10px;
       }
-      iron-autogrow-textarea {
-        display: block;
-        border: 1px solid #737373;
-        background-color: #eee;
-        padding: 10px;
-        font-family: 'Roboto', 'Noto', sans-serif;
-        font-size: 1em;
-      }
     </style>
+    <firebase-storage
+        id="storage"
+        app-name="bknd-roca"
+        path="/file"
+        files="[[file]]"
+        uploaded-files="{{uploadedFile}}"
+        on-error="catchError"
+        >
+      </firebase-storage>
     <template is="dom-if" if="[[editable]]">
-      <input is="iron-input"
-          bind-value="{{title}}">
-      </input>
-      <iron-autogrow-textarea
-          bind-value="{{body}}">
-      </iron-autogrow-textarea>
+      <input is="iron-input" bind-value="{{title}}"></input>
+      <iron-autogrow-textarea bind-value="{{body}}"></iron-autogrow-textarea>
+      <br><br>
+      <input type="file" id="file-uploader" on-change="onFileUpload">
     </template>
     <template is="dom-if" if="[[!editable]]">
       <h1 class$="[[emptyClass(title)]]">[[title]]</h1>
       <p class$="[[emptyClass(body)]]">[[body]]</p>
+      <p class$="[[emptyClass(fileName)]]">[[fileName]]</p>
+      <img src$="gs://viviendasroca-95bbf.appspot.com/file/{{fileName}}" alt="">
     </template>
 
   </template>
   <script>
     Polymer({
       is: 'bknd-sucursal',
-
       properties: {
         editable: {
           type: Boolean,
           reflectToAttribute: true,
           value: false
         },
-
         title: {
           type: String,
           notify: true,
           value: ''
         },
-
         body: {
           type: String,
           notify: true,
           value: ''
         },
-
-        lastUpdated: {
-          type: Number,
-          value: 0
+        uploadTasks: {
+          type: Array,
+          observer: '_uploadTasksChanged'
+        },
+        uploadedFile: {
+          type: Array,
+          value: []
+        },
+        fileName: {
+          type: String,
+          notify: true,
+          value: ''
         }
       },
-
       emptyClass: function(content) {
         return !content ? 'hidden' : '';
       },
-
       propertiesAreEmpty: function() {
         for (var i = 0; i < arguments.length; ++i) {
           if (arguments[i]) {
@@ -159,6 +163,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
         }
         return true;
+      },
+      catchError(e) {
+        console.log(e.detail.message);
+      },
+      _uploadTasksChanged(uploadTasks) {
+        console.log(uploadTasks);
+      },
+      _uploadedFilesChanged(uploadedFiles) {
+        console.log(uploadedFiles);
+      },
+      onFileUpload(e) {
+        this.uploadedFile = e.target.files[0];
+        this.$$('#storage').upload();
+        console.log(this.uploadedFile);
+        this.fileName = this.uploadedFile.lastModified + '-' + this.uploadedFile.name;
+        console.log(this.fileName);
+      },
+      isImage(c) {
+        return c && c.indexOf('image') === 0;
       }
     })
   </script>

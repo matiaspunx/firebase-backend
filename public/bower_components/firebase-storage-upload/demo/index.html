@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+  <head>
+    <title>firebase-storage-upload demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../paper-progress/paper-progress.html">
+
+    <link rel="import" href="../firebase-storage-upload.html">
+    <link rel="import" href="../../polymerfire/polymerfire.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+        paper-progress {
+            width: 100%
+        }
+    </style>
+    <firebase-app
+      database-url="https://fir-storage-upload.firebaseio.com"
+      auth-domain="fir-storage-upload.firebaseapp.com"
+      api-key="AIzaSyDaWkiZ5QLcPQppCEt0IpGKYd3QXPByZTc"
+      storage-bucket="fir-storage-upload.appspot.com">
+    </firebase-app>
+  </head>
+  <body>
+
+    <div class="horizontal center-justified layout">
+      <h3>Basic firebase-storage-upload Demo</h3>
+      <demo-snippet>
+        <template is="dom-bind">
+
+          <firebase-storage-upload
+            name="upload-input"
+            label="Upload label"
+            ref="/tests/"
+            accept="image/jpeg,image/jpeg,image/png,application/pdf"
+            max-file-size="6000"
+            progress="{{progress}}">
+
+            <paper-progress value="[[progress]]"></paper-progress>
+
+            <label for="upload-input">Some nice label</label>
+
+          </firebase-storage-upload>
+
+        </template>
+      </demo-snippet>
+    </div>
+
+  </body>
+</html>

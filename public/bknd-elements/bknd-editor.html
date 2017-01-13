@@ -23,21 +23,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         bottom: 0;
         z-index: 1;
       }
-
       :host([opened]) {
         display: block;
       }
-
       :host(.open) {
         background: rgb(191, 8, 17);
       }
-
       paper-button {
         background: rgb(241, 207, 0);
         color: rgb(191, 8, 17);
         margin-top: 15px;
       }
-
       #background {
         display: block;
         position: absolute;
@@ -49,21 +45,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         background: rgb(191, 8, 17);
         transform-origin: 128px 128px;
       }
-
       bknd-sucursal {
         display: block;
         position: absolute;
         top: 20px;
         left: 0px;
       }
-
       :host(.open) bknd-sucursal {
         position: relative;
         margin: auto;
         width: calc(100vw - 20px);
         max-width: 480px;
       }
-
       .controls {
         display: block;
         position: relative;
@@ -76,16 +69,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         transition: opacity 0.3s;
         opacity: 0;
       }
-
       :host(.open) .controls {
         opacity: 1;
       }
     </style>
     <div id="background"></div>
-    <bknd-sucursal id="sucursal" title="{{sucursal.title}}" body="{{sucursal.body}}" editable></bknd-sucursal>
+    <bknd-sucursal id="sucursal" title="{{sucursal.title}}" body="{{sucursal.body}}" file-name="{{sucursal.fileName}}" editable></bknd-sucursal>
     <div class="controls">
       <paper-button on-tap="delete">Borrar</paper-button>
-      <paper-button on-tap="save">Crear</paper-button>
+      <paper-button on-tap="save">Guardar</paper-button>
     </div>
   </template>
   <script>
@@ -97,13 +89,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: Object,
           notify: true
         },
-
         opened: {
           type: Boolean,
           reflectToAttribute: true,
           readOnly: true,
           value: false
-        },
+        }
       },
 
       open: function(sucursalElement) {
@@ -119,7 +110,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       create: function() {
         this._setOpened(true);
-        this.sucursal = { title: '', body: '' };
+        this.sucursal = { title: '', body: '', fileName: '' };
         this.transitionInFrom(this.getBoundingClientRect());
       },
 
